@@ -1,32 +1,24 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from '../components/navigation/Sidebar';
-import DashboardHeader from '../components/navigation/DashboardHeader';
+import Navbar from '../components/navigation/Navbar';
+import { useAuth } from '../context/AuthContext';
 
 interface DashboardLayoutProps {
   userRole: 'guest' | 'host' | 'admin';
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ userRole }) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const { user } = useAuth();
 
   return (
-    <div className="flex h-screen bg-neutral-50">
-      <Sidebar 
-        userRole={userRole} 
-        isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
-      />
+    <div className="min-h-screen bg-neutral-50">
+      <Navbar />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
-        
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="container-custom">
-            <Outlet />
-          </div>
-        </main>
-      </div>
+      <main className="py-4 md:py-6">
+        <div className="container-custom">
+          <Outlet />
+        </div>
+      </main>
     </div>
   );
 };

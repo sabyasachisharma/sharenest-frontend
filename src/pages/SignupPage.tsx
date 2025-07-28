@@ -1,24 +1,64 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Mail, Lock, User, Building } from 'lucide-react';
+import { Home, Mail, Lock, User, Building, Phone, FileText } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { getDashboardRoute } from '../utils/roleMapping';
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    fullName: '',
     userType: 'tenant', // tenant or landlord
+    phone: '',
+    bio: '',
   });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement signup logic
-    console.log('Form submitted:', formData);
+    setError('');
+    setIsLoading(true);
+
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.userType as 'tenant' | 'landlord',
+        phone: formData.phone,
+        bio: formData.bio,
+      });
+      
+      // Navigate to home page after successful signup
+      navigate('/');
+    } catch (err: any) {
+      setError(err.message || 'Failed to create an account. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -43,6 +83,13 @@ const SignupPage: React.FC = () => {
 
           {/* Form */}
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg p-3 text-sm">
+                {error}
+              </div>
+            )}
+
             {/* User Type Selection */}
             <div className="grid grid-cols-2 gap-4 p-1 bg-neutral-100 rounded-lg">
               <button
@@ -69,17 +116,33 @@ const SignupPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Full Name Input */}
+            {/* First Name Input */}
             <div>
               <div className="relative">
                 <User className="h-5 w-5 text-neutral-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
                 <input
                   type="text"
-                  name="fullName"
+                  name="firstName"
                   required
                   className="pl-10 w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="Full Name"
-                  value={formData.fullName}
+                  placeholder="First Name"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            {/* Last Name Input */}
+            <div>
+              <div className="relative">
+                <User className="h-5 w-5 text-neutral-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                <input
+                  type="text"
+                  name="lastName"
+                  required
+                  className="pl-10 w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Last Name"
+                  value={formData.lastName}
                   onChange={handleChange}
                 />
               </div>
@@ -96,6 +159,22 @@ const SignupPage: React.FC = () => {
                   className="pl-10 w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Email address"
                   value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            {/* Phone Input */}
+            <div>
+              <div className="relative">
+                <Phone className="h-5 w-5 text-neutral-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                <input
+                  type="tel"
+                  name="phone"
+                  required
+                  className="pl-10 w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Phone number (e.g., +1234567890)"
+                  value={formData.phone}
                   onChange={handleChange}
                 />
               </div>
@@ -133,13 +212,30 @@ const SignupPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Bio Input */}
+            <div>
+              <div className="relative">
+                <FileText className="h-5 w-5 text-neutral-400 absolute left-3 top-3" />
+                <textarea
+                  name="bio"
+                  required
+                  rows={3}
+                  className="pl-10 w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 resize-none"
+                  placeholder={`Tell us about yourself ${formData.userType === 'tenant' ? '(looking for accommodation)' : '(as a property owner)'}`}
+                  value={formData.bio}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
             {/* Submit Button */}
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+                disabled={isLoading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create Account
+                {isLoading ? 'Creating Account...' : 'Create Account'}
               </button>
             </div>
 

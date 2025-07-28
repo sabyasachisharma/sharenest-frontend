@@ -22,16 +22,25 @@ import TermsOfService from './pages/legal/TermsOfService';
 import CookiePolicy from './pages/legal/CookiePolicy';
 
 // Guest Pages
-import GuestDashboardPage from './pages/guest/DashboardPage';
 import GuestBookingsPage from './pages/guest/BookingsPage';
 import GuestBookingDetailPage from './pages/guest/BookingDetailPage';
 
 // Host Pages
-import HostDashboardPage from './pages/host/DashboardPage';
 import HostPropertiesPage from './pages/host/PropertiesPage';
 import HostPropertyDetailPage from './pages/host/PropertyDetailPage';
 import HostPropertyFormPage from './pages/host/PropertyFormPage';
-import HostBookingsPage from './pages/host/BookingsPage'; 
+import HostBookingsPage from './pages/host/BookingsPage';
+
+// Placeholder components for missing pages
+const PlaceholderPage: React.FC<{ title: string }> = ({ title }) => (
+  <div className="container mx-auto px-4 py-8">
+    <h1 className="text-2xl font-bold mb-4">{title}</h1>
+    <p className="text-gray-600">This page is coming soon.</p>
+  </div>
+);
+
+import MessagesPage from './components/common/MessagesPage';
+import ProfilePage from './components/common/ProfilePage';
 
 function App() {
   return (
@@ -62,26 +71,44 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<GuestDashboardPage />} />
+            <Route index element={<GuestBookingsPage />} />
             <Route path="bookings" element={<GuestBookingsPage />} />
             <Route path="bookings/:id" element={<GuestBookingDetailPage />} />
+            <Route path="messages" element={<MessagesPage userRole="guest" />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
 
           {/* Host Routes */}
           <Route 
             path="/host" 
             element={
-              <RoleRoute allowedRoles={['host']}>
+              <RoleRoute allowedRoles={['landlord']}>
                 <DashboardLayout userRole="host" />
               </RoleRoute>
             }
           >
-            <Route index element={<HostDashboardPage />} />
+            <Route index element={<HostPropertiesPage />} />
             <Route path="properties" element={<HostPropertiesPage />} />
             <Route path="properties/new" element={<HostPropertyFormPage />} />
             <Route path="properties/:id" element={<HostPropertyDetailPage />} />
             <Route path="properties/:id/edit" element={<HostPropertyFormPage />} />
             <Route path="bookings" element={<HostBookingsPage />} />
+            <Route path="messages" element={<MessagesPage userRole="host" />} />
+            <Route path="reviews" element={<PlaceholderPage title="Reviews" />} />
+            <Route path="earnings" element={<PlaceholderPage title="Earnings" />} />
+            <Route path="profile" element={<ProfilePage />} />
+          </Route>
+
+          {/* Settings Route (available to all authenticated users) */}
+          <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <DashboardLayout userRole="guest" />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<PlaceholderPage title="Settings" />} />
           </Route>
           
           {/* 404 Route */}

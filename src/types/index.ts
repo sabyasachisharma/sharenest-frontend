@@ -1,11 +1,12 @@
 export interface User {
   id: string;
   email: string;
+  role: 'tenant' | 'landlord';
   firstName: string;
   lastName: string;
-  role: 'guest' | 'host' | 'admin';
-  avatar?: string;
-  createdAt: string;
+  profileImage?: string | null;
+  phoneNumber?: string;
+  bio?: string;
 }
 
 export interface AuthState {

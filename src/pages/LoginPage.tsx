@@ -17,9 +17,12 @@ const LoginPage = () => {
     setError('');
     
     try {
+      console.log('Starting login process...');
       await login(formData.email, formData.password);
-      navigate('/guest');
+      console.log('Login successful, navigating to home...');
+      navigate('/');
     } catch (err) {
+      console.error('Login error:', err);
       setError('Invalid email or password');
     }
   };

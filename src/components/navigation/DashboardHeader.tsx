@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Bell, Search } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { mapBackendToFrontendRole } from '../../utils/roleMapping';
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
@@ -24,7 +25,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onMenuClick }) => {
 
           <div className="hidden md:flex items-center space-x-2">
             <span className="font-semibold text-neutral-800">
-              {user?.role === 'host' ? 'Host Dashboard' : 'Guest Dashboard'}
+              {user && mapBackendToFrontendRole(user.role) === 'host' ? 'Host Dashboard' : 'Guest Dashboard'}
             </span>
           </div>
         </div>

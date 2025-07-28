@@ -15,7 +15,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 interface SidebarProps {
-  userRole: 'guest' | 'host' | 'admin';
+  userRole: 'guest' | 'host';
   isOpen: boolean;
   onClose: () => void;
 }
@@ -24,7 +24,14 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen, onClose }) => {
   const { logout } = useAuth();
   const location = useLocation();
 
-  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
+  const isActive = (path: string) => {
+    // Exact match for dashboard routes
+    if (path === '/guest' || path === '/host') {
+      return location.pathname === path;
+    }
+    // For other routes, check if current path starts with the link path
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+  };
 
   const handleLogout = () => {
     logout();

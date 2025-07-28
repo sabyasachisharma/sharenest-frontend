@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { ApiResponse } from '../types';
+import { cookieUtils } from '../utils/cookies';
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3005/api';
 
 const axiosInstance = axios.create({
   baseURL,
@@ -14,7 +15,7 @@ const axiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = cookieUtils.getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,7 +34,7 @@ axiosInstance.interceptors.response.use(
       'Something went wrong';
     
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
+      cookieUtils.clearAuthTokens();
       // You could redirect to login here if needed
     }
     
