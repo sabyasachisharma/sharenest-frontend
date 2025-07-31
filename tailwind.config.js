@@ -52,7 +52,7 @@ export default {
           100: '#d1fae5',
           500: '#10b981',
           600: '#059669',
-        },
+      },
         // Success, Warning, Error colors
         success: {
           50: '#ecfdf5',
@@ -68,13 +68,13 @@ export default {
           50: '#fef2f2',
           500: '#ef4444',
           600: '#dc2626',
-        },
+      },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-primary': 'linear-gradient(135deg, #0ea5e9 0%, #a855f7 100%)',
         'gradient-secondary': 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
-      },
+        },
       boxShadow: {
         'modern': '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
         'modern-lg': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',

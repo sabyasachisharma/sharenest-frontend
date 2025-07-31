@@ -34,24 +34,18 @@ const Hero: React.FC = () => {
 
   return (
     <section className="relative">
-      {/* Hero Image */}
-      <div className="absolute inset-0 bg-neutral-900">
-        <img
-          src="https://images.pexels.com/photos/2119713/pexels-photo-2119713.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-          alt="Beautiful vacation home"
-          className="w-full h-full object-cover opacity-70"
-        />
-      </div>
+      {/* Hero Background - Simple Solid Color */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800"></div>
 
       {/* Content */}
       <div className="relative min-h-[80vh] flex items-center">
         <div className="container-custom py-20">
-          <div className="max-w-4xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-              Share Your Space, Find Your Place
+          <div className="max-w-4xl text-center">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 whitespace-nowrap">
+              Your Next Home, Just a Click Away
             </h1>
             <h2 className="text-xl md:text-2xl text-white/90 mb-8">
-              Find your ideal shared living space with flexible stay durations - Connect with flatmates and discover your perfect temporary home
+              Sublet or rent apartments directly from verified hosts.
             </h2>
 
             {/* Search Form */}

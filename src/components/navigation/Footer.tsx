@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Home className="w-6 h-6 text-primary-400" />
-              <span className="text-xl font-bold text-white">ShareNest</span>
+              <span className="text-xl font-semibold text-white tracking-wide">ShareNest</span>
             </div>
             <p className="text-neutral-300 mb-4">
               Find your ideal shared living space - Connect with flatmates, discover sublets, and make your next home sharing experience memorable

@@ -107,7 +107,7 @@ const PropertiesPage: React.FC = () => {
               {/* Property content here */}
             </div>
           ))}
-        </div>
+      </div>
       )}
     </div>
   );

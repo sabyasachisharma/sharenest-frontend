@@ -14,6 +14,7 @@ import SearchPage from './pages/SearchPage';
 import PropertyDetailsPage from './pages/PropertyDetailsPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import HelpPage from './pages/HelpPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Legal Pages
@@ -55,6 +56,7 @@ function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="signup" element={<SignupPage />} />
             <Route path="register" element={<SignupPage />} />
+            <Route path="help" element={<HelpPage />} />
             
             {/* Legal Routes */}
             <Route path="privacy-policy" element={<PrivacyPolicy />} />

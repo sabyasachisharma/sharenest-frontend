@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen, onClose }) => {
           <div className="flex items-center justify-between p-4 border-b">
             <div className="flex items-center space-x-2">
               <Home className="w-6 h-6 text-primary-600" />
-              <span className="text-lg font-bold text-primary-600">ShareNest</span>
+              <span className="text-lg font-semibold text-primary-600 tracking-wide">ShareNest</span>
             </div>
             <button 
               className="p-1 rounded-full hover:bg-neutral-100 md:hidden"

@@ -3,31 +3,148 @@
 @tailwind utilities;
 
 @layer base {
+  /* Import Google Fonts for better typography */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  
+  :root {
+    /* Typography variables */
+    --font-size-xs: 0.75rem;     /* 12px */
+    --font-size-sm: 0.875rem;    /* 14px */
+    --font-size-base: 1rem;      /* 16px */
+    --font-size-lg: 1.125rem;    /* 18px */
+    --font-size-xl: 1.25rem;     /* 20px */
+    --font-size-2xl: 1.5rem;     /* 24px */
+    --font-size-3xl: 1.875rem;   /* 30px */
+    --font-size-4xl: 2.25rem;    /* 36px */
+    --font-size-5xl: 3rem;       /* 48px */
+    
+    /* Line heights */
+    --line-height-tight: 1.25;
+    --line-height-snug: 1.375;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
+    --line-height-loose: 2;
+    
+    /* Spacing scale */
+    --spacing-xs: 0.5rem;   /* 8px */
+    --spacing-sm: 0.75rem;  /* 12px */
+    --spacing-base: 1rem;   /* 16px */
+    --spacing-lg: 1.5rem;   /* 24px */
+    --spacing-xl: 2rem;     /* 32px */
+    --spacing-2xl: 3rem;    /* 48px */
+    --spacing-3xl: 4rem;    /* 64px */
+    --spacing-4xl: 6rem;    /* 96px */
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-neutral-50 text-neutral-900;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
-  h1, h2, h3, h4, h5, h6 {
+  /* Typography hierarchy */
+  h1 {
+    @apply text-neutral-900 font-bold;
+    font-size: var(--font-size-4xl);
+    line-height: var(--line-height-tight);
+    letter-spacing: -0.02em;
+  }
+  
+  h2 {
+    @apply text-neutral-900 font-bold;
+    font-size: var(--font-size-3xl);
+    line-height: var(--line-height-tight);
+    letter-spacing: -0.015em;
+  }
+  
+  h3 {
     @apply text-neutral-900 font-semibold;
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-snug);
+    letter-spacing: -0.01em;
+  }
+  
+  h4 {
+    @apply text-neutral-900 font-semibold;
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+  }
+  
+  h5 {
+    @apply text-neutral-900 font-medium;
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-normal);
+  }
+  
+  h6 {
+    @apply text-neutral-900 font-medium;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+  }
+
+  p {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: #525252; /* neutral-600 */
+  }
+
+  /* Large text for hero sections */
+  .text-hero {
+    font-size: clamp(2.25rem, 5vw, 3.75rem); /* 36px - 60px */
+    line-height: var(--line-height-tight);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  .text-subtitle {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-relaxed);
+    font-weight: 500;
+    color: #6b7280; /* neutral-500 */
+  }
+
+  /* Responsive typography */
+  @media (min-width: 640px) {
+    h1 { font-size: var(--font-size-5xl); }
+    h2 { font-size: var(--font-size-4xl); }
+    h3 { font-size: var(--font-size-3xl); }
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 border;
+    letter-spacing: -0.005em;
   }
   
   .btn-primary {
-    @apply bg-gradient-primary text-white hover:shadow-modern hover:scale-105 focus:ring-primary-500;
+    @apply bg-gradient-primary text-white border-transparent hover:shadow-modern hover:scale-105 focus:ring-primary-500;
   }
   
   .btn-secondary {
-    @apply bg-white text-primary-600 border border-primary-200 hover:bg-primary-50 hover:border-primary-300 focus:ring-primary-500;
+    @apply bg-white text-primary-600 border-primary-200 hover:bg-primary-50 hover:border-primary-300 focus:ring-primary-500;
+  }
+  
+  .btn-large {
+    @apply px-8 py-4 text-lg;
+  }
+  
+  .btn-small {
+    @apply px-4 py-2 text-sm;
   }
   
   .card {
-    @apply bg-white rounded-xl shadow-modern border border-neutral-200 hover:shadow-modern-lg transition-all duration-300;
+    @apply bg-white rounded-2xl shadow-modern border border-neutral-200 hover:shadow-modern-lg transition-all duration-300;
   }
   
   .container-custom {
@@ -35,11 +152,32 @@
   }
   
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all duration-200;
+    @apply w-full px-4 py-3 rounded-xl border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all duration-200 text-base;
+    font-family: inherit;
   }
   
   .nav-link {
-    @apply text-neutral-700 hover:text-primary-600 font-medium transition-colors duration-200;
+    @apply text-neutral-700 hover:text-primary-600 font-medium transition-colors duration-200 text-base;
+  }
+
+  /* Hero section styles */
+  .hero-section {
+    background: linear-gradient(155.25deg, rgba(14, 165, 233, 0) 48.74%, #0ea5e9 92.9%),
+                linear-gradient(335.16deg, rgba(168, 85, 247, 0) 63.62%, #a855f7 99.6%),
+                linear-gradient(50.88deg, rgba(14, 165, 233, 0) 28.21%, #3b82f6 83.2%),
+                #0ea5e9;
+    min-height: 500px;
+    height: 75vh;
+    max-height: 650px;
+  }
+
+  /* Spacing utilities */
+  .section-padding {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .section-padding-small {
+    @apply py-12 sm:py-16 lg:py-20;
   }
 }
 
@@ -49,11 +187,37 @@
   }
   
   .animate-fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.6s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out;
+  }
+
+  /* Better focus states */
+  .focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

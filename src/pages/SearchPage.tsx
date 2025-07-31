@@ -287,7 +287,7 @@ const SearchPage: React.FC = () => {
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               {filters.location ? `Discover ${filters.location}` : 'Find Your Perfect Stay'}
-            </h1>
+          </h1>
             <p className="text-xl text-primary-100 max-w-2xl mx-auto">
               Explore unique accommodations around the world
             </p>
@@ -323,16 +323,16 @@ const SearchPage: React.FC = () => {
                 />
               </div>
             </div>
-          </div>
-          
+        </div>
+
           {/* Mobile Filters */}
           {showFilters && (
             <div className="md:hidden card p-4 mb-6">
-              <PropertyFilters 
-                filters={filters} 
-                onFilterChange={handleFilterChange} 
-                onSearch={handleSearch}
-              />
+        <PropertyFilters 
+          filters={filters} 
+          onFilterChange={handleFilterChange} 
+          onSearch={handleSearch}
+        />
             </div>
           )}
         </div>
@@ -471,10 +471,10 @@ const SearchPage: React.FC = () => {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <PropertyCard
-                    property={property}
-                    isFavorite={favorites.includes(property.id)}
-                    onToggleFavorite={handleToggleFavorite}
-                  />
+                  property={property}
+                  isFavorite={favorites.includes(property.id)}
+                  onToggleFavorite={handleToggleFavorite}
+                />
                 </div>
               ))}
             </div>

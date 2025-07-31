@@ -13,12 +13,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ userRole }) => {
   return (
     <div className="min-h-screen bg-neutral-50">
       <Navbar />
-      
+        
       <main className="py-4 md:py-6">
-        <div className="container-custom">
-          <Outlet />
-        </div>
-      </main>
+          <div className="container-custom">
+            <Outlet />
+          </div>
+        </main>
     </div>
   );
 };

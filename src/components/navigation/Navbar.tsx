@@ -57,13 +57,13 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-800 shadow-sm sticky top-0 z-50">
       <div className="container-custom">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2" onClick={closeMenus}>
-            <Home className="w-8 h-8 text-primary-600" />
-            <span className="text-xl font-bold text-primary-600">ShareNest</span>
+            <Home className="w-8 h-8 text-white" />
+            <span className="text-xl font-bold text-white">ShareNest</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={toggleUserMenu}
-                  className="flex items-center space-x-2 text-neutral-700 hover:text-primary-600 transition-colors"
+                  className="flex items-center space-x-2 text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 px-4 py-2 rounded-full transition-all duration-300 ease-in-out"
                 >
                   <User className="w-5 h-5" />
                   <span className="font-medium">
@@ -121,25 +121,32 @@ const Navbar: React.FC = () => {
                 )}
               </div>
             ) : showUserLoading ? (
-              <div className="flex items-center space-x-2 text-neutral-600">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary-600 border-t-transparent"></div>
+              <div className="flex items-center space-x-2 text-white">
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                 <span className="font-medium">Loading...</span>
               </div>
             ) : (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-8">
                 <Link
-                  to="/login"
-                  className="text-neutral-700 hover:text-primary-600 font-medium transition-colors"
+                  to="/help"
+                  className="text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium px-4 py-2 rounded-full transition-all duration-300 ease-in-out"
                   onClick={closeMenus}
                 >
-                  Sign in
+                  Help
+                </Link>
+                <Link
+                  to="/login"
+                  className="text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium px-4 py-2 rounded-full transition-all duration-300 ease-in-out"
+                  onClick={closeMenus}
+                >
+                  Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors font-medium"
+                  className="text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium px-4 py-2 rounded-full transition-all duration-300 ease-in-out"
                   onClick={closeMenus}
                 >
-                  Sign up
+                  SignUp
                 </Link>
               </div>
             )}
@@ -148,9 +155,9 @@ const Navbar: React.FC = () => {
           {/* Mobile Menu Button */}
           <button className="md:hidden" onClick={toggleMenu}>
             {isMenuOpen ? (
-              <X className="h-6 w-6 text-neutral-700" />
+              <X className="h-6 w-6 text-white" />
             ) : (
-              <Menu className="h-6 w-6 text-neutral-700" />
+              <Menu className="h-6 w-6 text-white" />
             )}
           </button>
         </div>
@@ -158,7 +165,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white pb-4 px-4 animate-fade-in">
+        <div className="md:hidden bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-800 pb-4 px-4 animate-fade-in">
           <div className="flex flex-col space-y-3">
             {/* Removed all left navigation items from mobile menu too */}
 
@@ -166,7 +173,7 @@ const Navbar: React.FC = () => {
               <>
                 <Link
                   to={user?.role === 'landlord' ? '/host/bookings' : '/guest/bookings'}
-                  className="py-2 text-neutral-700 hover:text-primary-600 font-medium"
+                  className="py-2 px-4 text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium rounded-full transition-all duration-300 ease-in-out"
                   onClick={closeMenus}
                 >
                   <span className="flex items-center">
@@ -176,7 +183,7 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link
                   to={user?.role === 'landlord' ? '/host/messages' : '/guest/messages'}
-                  className="py-2 text-neutral-700 hover:text-primary-600 font-medium"
+                  className="py-2 px-4 text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium rounded-full transition-all duration-300 ease-in-out"
                   onClick={closeMenus}
                 >
                   <span className="flex items-center">
@@ -186,7 +193,7 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link
                   to={getProfileLink()}
-                  className="py-2 text-neutral-700 hover:text-primary-600 font-medium"
+                  className="py-2 px-4 text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium rounded-full transition-all duration-300 ease-in-out"
                   onClick={closeMenus}
                 >
                   <span className="flex items-center">
@@ -196,32 +203,39 @@ const Navbar: React.FC = () => {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center py-2 text-neutral-700 hover:text-primary-600 font-medium"
+                  className="flex items-center py-2 px-4 text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium rounded-full transition-all duration-300 ease-in-out w-full text-left"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Log out
                 </button>
               </>
             ) : showUserLoading ? (
-              <div className="flex items-center justify-center py-4 text-neutral-600">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary-600 border-t-transparent mr-2"></div>
+              <div className="flex items-center justify-center py-4 text-white">
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
                 <span className="font-medium">Loading account...</span>
               </div>
             ) : (
-              <div className="flex flex-col space-y-2 pt-2">
+              <div className="flex flex-col space-y-4 pt-2">
                 <Link 
-                  to="/login" 
-                  className="btn btn-secondary w-full"
+                  to="/help" 
+                  className="text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium px-4 py-2 rounded-full transition-all duration-300 ease-in-out text-center"
                   onClick={closeMenus}
                 >
-                  Log in
+                  Help
+                </Link>
+                <Link 
+                  to="/login" 
+                  className="text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium px-4 py-2 rounded-full transition-all duration-300 ease-in-out text-center"
+                  onClick={closeMenus}
+                >
+                  Login
                 </Link>
                 <Link 
                   to="/register" 
-                  className="btn btn-primary w-full"
+                  className="text-white hover:text-purple-200 hover:bg-white hover:bg-opacity-10 font-medium px-4 py-2 rounded-full transition-all duration-300 ease-in-out text-center"
                   onClick={closeMenus}
                 >
-                  Sign up
+                  SignUp
                 </Link>
               </div>
             )}

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Mail, Lock, User, Building, Phone, FileText } from 'lucide-react';
+import { Home, Mail, Lock, User, Phone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { getDashboardRoute } from '../utils/roleMapping';
+import { validateEmail, validateName, validatePassword, validateGermanPhone } from '../utils/validation';
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,25 +15,65 @@ const SignupPage: React.FC = () => {
     confirmPassword: '',
     userType: 'tenant', // tenant or landlord
     phone: '',
-    bio: '',
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Validate first name
+    const firstNameValidation = validateName(formData.firstName);
+    if (!firstNameValidation.isValid) {
+      newErrors.firstName = firstNameValidation.message!;
+    }
+
+    // Validate last name
+    const lastNameValidation = validateName(formData.lastName);
+    if (!lastNameValidation.isValid) {
+      newErrors.lastName = lastNameValidation.message!;
+    }
+
+    // Validate email
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) {
+      newErrors.email = emailValidation.message!;
+    }
+
+    // Validate phone
+    const phoneValidation = validateGermanPhone(formData.phone);
+    if (!phoneValidation.isValid) {
+      newErrors.phone = phoneValidation.message!;
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      newErrors.password = passwordValidation.message!;
+    }
+
+    // Validate confirm password
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrors({});
     setIsLoading(true);
 
-    // Validation
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      setIsLoading(false);
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    // Validate all fields
+    if (!validateForm()) {
       setIsLoading(false);
       return;
     }
@@ -46,34 +86,43 @@ const SignupPage: React.FC = () => {
         password: formData.password,
         role: formData.userType as 'tenant' | 'landlord',
         phone: formData.phone,
-        bio: formData.bio,
+        bio: '', // Empty bio since we removed the field
       });
       
       // Navigate to home page after successful signup
       navigate('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to create an account. Please try again.');
+      setErrors({ general: err.message || 'Failed to create an account. Please try again.' });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+    
+    // Clear specific field error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: ''
+      });
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 to-neutral-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-neutral-200">
         <div className="px-6 py-8">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="flex justify-center items-center mb-4">
               <Home className="h-8 w-8 text-primary-500" />
-              <span className="ml-2 text-2xl font-bold text-neutral-800">ShareNest</span>
+              <span className="ml-2 text-2xl font-semibold text-neutral-800 tracking-wide">ShareNest</span>
             </div>
             <h2 className="text-3xl font-extrabold text-neutral-900">Create your account</h2>
             <p className="mt-2 text-sm text-neutral-600">
@@ -84,9 +133,9 @@ const SignupPage: React.FC = () => {
           {/* Form */}
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Error Message */}
-            {error && (
+            {errors.general && (
               <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg p-3 text-sm">
-                {error}
+                {errors.general}
               </div>
             )}
 
@@ -129,6 +178,9 @@ const SignupPage: React.FC = () => {
                   value={formData.firstName}
                   onChange={handleChange}
                 />
+                {errors.firstName && (
+                  <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
+                )}
               </div>
             </div>
 
@@ -145,6 +197,9 @@ const SignupPage: React.FC = () => {
                   value={formData.lastName}
                   onChange={handleChange}
                 />
+                {errors.lastName && (
+                  <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
+                )}
               </div>
             </div>
 
@@ -161,6 +216,9 @@ const SignupPage: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                 />
+                {errors.email && (
+                  <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                )}
               </div>
             </div>
 
@@ -177,6 +235,9 @@ const SignupPage: React.FC = () => {
                   value={formData.phone}
                   onChange={handleChange}
                 />
+                {errors.phone && (
+                  <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
+                )}
               </div>
             </div>
 
@@ -193,6 +254,9 @@ const SignupPage: React.FC = () => {
                   value={formData.password}
                   onChange={handleChange}
                 />
+                {errors.password && (
+                  <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                )}
               </div>
             </div>
 
@@ -209,22 +273,9 @@ const SignupPage: React.FC = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                 />
-              </div>
-            </div>
-
-            {/* Bio Input */}
-            <div>
-              <div className="relative">
-                <FileText className="h-5 w-5 text-neutral-400 absolute left-3 top-3" />
-                <textarea
-                  name="bio"
-                  required
-                  rows={3}
-                  className="pl-10 w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 resize-none"
-                  placeholder={`Tell us about yourself ${formData.userType === 'tenant' ? '(looking for accommodation)' : '(as a property owner)'}`}
-                  value={formData.bio}
-                  onChange={handleChange}
-                />
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>
+                )}
               </div>
             </div>
 
