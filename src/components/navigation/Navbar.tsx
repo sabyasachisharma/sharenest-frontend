@@ -7,11 +7,24 @@ import { getDashboardRoute, mapBackendToFrontendRole } from '../../utils/roleMap
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, fetchUserData } = useAuth();
   const navigate = useNavigate();
 
-  // Only show user navigation if actually authenticated AND we have a token
-  const showUserNavigation = isAuthenticated;
+  // Only show user navigation if we have both authentication AND user data
+  const showUserNavigation = isAuthenticated && user;
+  // Show loading state when authenticated but no user data
+  const showUserLoading = isAuthenticated && !user;
+
+  // Auto-fetch user data when authenticated but no user data
+  React.useEffect(() => {
+    if (isAuthenticated && !user) {
+      // Only try once, don't retry if it fails
+      fetchUserData().catch(() => {
+        // If fetchUserData fails, the user will be logged out automatically
+        // by the AuthContext, so no need to do anything here
+      });
+    }
+  }, [isAuthenticated, user]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
@@ -28,22 +41,18 @@ const Navbar: React.FC = () => {
 
   const getProfileLink = () => {
     if (!user) {
-      console.log('No user found, redirecting to login');
       return '/login';
     }
     // Fix: Use 'guest' to match the routes in App.tsx
     const profileRoute = user.role === 'landlord' ? '/host/profile' : '/guest/profile';
-    console.log('Profile route for', user.role, ':', profileRoute);
     return profileRoute;
   };
 
   const getDashboardLink = () => {
     if (!user) {
-      console.log('No user found for dashboard, redirecting to login');
       return '/login';
     }
     const dashboardRoute = getDashboardRoute(user.role);
-    console.log('Dashboard route for', user.role, ':', dashboardRoute);
     return dashboardRoute;
   };
 
@@ -110,6 +119,11 @@ const Navbar: React.FC = () => {
                     </button>
                   </div>
                 )}
+              </div>
+            ) : showUserLoading ? (
+              <div className="flex items-center space-x-2 text-neutral-600">
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary-600 border-t-transparent"></div>
+                <span className="font-medium">Loading...</span>
               </div>
             ) : (
               <div className="flex items-center space-x-4">
@@ -188,6 +202,11 @@ const Navbar: React.FC = () => {
                   Log out
                 </button>
               </>
+            ) : showUserLoading ? (
+              <div className="flex items-center justify-center py-4 text-neutral-600">
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary-600 border-t-transparent mr-2"></div>
+                <span className="font-medium">Loading account...</span>
+              </div>
             ) : (
               <div className="flex flex-col space-y-2 pt-2">
                 <Link 

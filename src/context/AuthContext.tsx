@@ -85,21 +85,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadUser = async () => {
       const accessToken = cookieUtils.getAccessToken();
-      const refreshTokenValue = cookieUtils.getRefreshToken();
-      
-      console.log('🔍 DEBUG: Checking cookies...');
-      console.log('🔍 AccessToken from cookies:', accessToken);
-      console.log('🔍 RefreshToken from cookies:', refreshTokenValue);
-      console.log('🔍 cookieUtils.isAuthenticated():', cookieUtils.isAuthenticated());
-      
-      // Let's also check what cookies exist
-      console.log('🍪 All cookies:', document.cookie);
-      
-      console.log('🔍 Auth Check - Access token found:', !!accessToken);
-      console.log('🔍 Auth Check - Refresh token found:', !!refreshTokenValue);
       
       if (!accessToken) {
-        console.log('❌ No access token found, setting authenticated to FALSE');
         setAuthState({
           user: null,
           token: null,
@@ -110,7 +97,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      console.log('✅ Access token found, setting authenticated to TRUE');
+      // If we have an access token, set the user as authenticated
+      // User data will be loaded lazily when needed
       api.setAuthToken(accessToken);
       
       setAuthState(prev => ({
@@ -119,16 +107,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: true,
         isLoading: false,
       }));
-
-      // Try to get user data in background
-      if (refreshTokenValue) {
-        console.log('🔄 Attempting to get user data in background...');
-        try {
-          await refreshToken();
-        } catch (error) {
-          console.error('❌ Background refresh failed:', error);
-        }
-      }
     };
 
     loadUser();
@@ -138,11 +116,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const refreshTokenValue = cookieUtils.getRefreshToken();
       if (!refreshTokenValue) {
-        console.log('No refresh token found');
         return false;
       }
 
-      console.log('Attempting to refresh token...');
       const response = await api.post('/auth/refresh-token', { 
         refreshToken: refreshTokenValue 
       });
@@ -150,7 +126,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response && (response as any).accessToken) {
         const { accessToken, refreshToken: newRefreshToken, user } = response as any;
         
-        console.log('Token refresh successful with user data');
         cookieUtils.setAuthTokens(accessToken, newRefreshToken, user?.id);
         api.setAuthToken(accessToken);
         
@@ -168,7 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           } : prev.user,
           token: accessToken,
           isAuthenticated: true,
-          isLoading: false, // Never loading
+          isLoading: false,
           error: null,
         }));
         
@@ -177,6 +152,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return false;
     } catch (error) {
       console.error('Token refresh failed:', error);
+      
+      // If refresh token is invalid, clear all auth data and logout
+      cookieUtils.clearAuthTokens();
+      api.setAuthToken(null);
+      setAuthState({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+      });
+      
       return false;
     }
   };
@@ -185,16 +172,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Only set loading for login operation, not for navbar
       setAuthState(prev => ({ ...prev, error: null }));
-      console.log('Sending login request with:', { email, password });
       
       const response = await api.post('/auth/login', { email, password });
-      
-      console.log('Full login response:', response);
       
       if (response && (response as any).success && (response as any).user) {
         const { accessToken, refreshToken, user } = response as any;
         
-        console.log('Login successful, storing tokens...');
         cookieUtils.setAuthTokens(accessToken, refreshToken, user.id);
         api.setAuthToken(accessToken);
         
@@ -231,17 +214,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (userData: RegisterData) => {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
-      console.log('Sending registration request...', userData);
       
       const response = await api.post('/auth/register', userData);
-      
-      console.log('Full registration response:', response);
       
       // Handle the actual response structure - API interceptor extracts data
       if (response && (response as any).message === "Registration successful." && (response as any).user) {
         const { user } = response as any;
-        
-        console.log('Registration successful, user created:', user);
         
         setAuthState({
           user: {
@@ -289,10 +267,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Don't set loading state for profile updates either
       setAuthState(prev => ({ ...prev, error: null }));
-      console.log('Updating profile with data:', userData);
       
       const response = await api.put('/users/profile', userData);
-      console.log('Profile update response:', response);
       
       if (response) {
         const updatedUser = { 
@@ -308,7 +284,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           error: null,
         }));
         
-        console.log('Profile updated successfully, new user state:', updatedUser);
         return updatedUser;
       } else {
         throw new Error('Invalid response from profile update');
@@ -317,7 +292,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Profile update error:', error);
       
       if (error.response?.status === 401) {
-        console.log('Token might be expired, trying refresh...');
         const refreshSuccess = await refreshToken();
         
         if (refreshSuccess) {
@@ -356,24 +330,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserData = async (): Promise<boolean> => {
     try {
+      // If we already have user data, no need to fetch again
+      if (authState.user && authState.user.id) {
+        return true;
+      }
+
+      // If we don't have a token, we can't fetch user data
       if (!authState.token) {
         return false;
       }
 
-      setAuthState(prev => ({ ...prev, isLoading: true }));
-      
       // Try refresh to get user data
       const refreshSuccess = await refreshToken();
       
       if (!refreshSuccess) {
-        setAuthState(prev => ({ ...prev, isLoading: false }));
+        // Refresh failed, user is now logged out
         return false;
       }
       
       return true;
     } catch (error) {
       console.error('Error fetching user data:', error);
-      setAuthState(prev => ({ ...prev, isLoading: false }));
       return false;
     }
   };

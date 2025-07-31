@@ -7,6 +7,7 @@ export interface User {
   profileImage?: string | null;
   phoneNumber?: string;
   bio?: string;
+  createdAt?: string;
 }
 
 export interface AuthState {
